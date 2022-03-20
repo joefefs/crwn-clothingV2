@@ -4,6 +4,7 @@ import {
   signInWithRedirect,
   signInWithPopup,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword
 } from "firebase/auth";
 import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -20,10 +21,10 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 // You can have many providers of Authentication
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
 //Here you set some params for that auth provider
-provider.setCustomParameters({
+googleProvider.setCustomParameters({
   prompt: "select_account",
 });
 
@@ -31,14 +32,17 @@ provider.setCustomParameters({
 export const auth = getAuth();
 
 // acutally create the auth function with the auth initiliazed and the provider
-export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
+export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider);// this is pop up redirect
+export const signInWithGoogleRedirect = () => signInWithRedirect(auth, googleProvider) //this is redirect sign in
+
 
 //Creates a dtabase variable that will point to firestore (Firebase's DB)
 export const db = getFirestore()
 
 
 //Here we will set a new User coming from the response after a succseful authentication. userAuth is the response from the Auth on the sign in component
-export const createUserDocumentFromAuth = async (userAuth) => {
+export const createUserDocumentFromAuth = async (userAuth, additionalInformatio = {} ) => { //the second param is a methid for the SignUp with Email and password (because it might return a user without displayName for example)
+
     //Here we check if there's an existing user document
     //doc func (method?) receives 3 args: database, the name of the collection, id (we can us the auth response user's UID)
     const userDocRef = doc(db, 'users', userAuth.uid )
@@ -63,10 +67,11 @@ export const createUserDocumentFromAuth = async (userAuth) => {
             await setDoc(userDocRef, {
                 displayName,
                 email,
-                createdAt
+                createdAt,
+                ...additionalInformatio
             })
         }catch(error){
-            console.log('error creating the user'. error.message)
+            console.log('error creating the user', error.message)
         }
     }
 
@@ -74,4 +79,12 @@ export const createUserDocumentFromAuth = async (userAuth) => {
     // userSnapshot.exists() return true and we can do nothing but return.
 
     return userDocRef
+}
+
+// custom Func that calls the firebase auth Func with the data from the sign-up Component
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+if(!email || !password) return;
+
+return await createUserWithEmailAndPassword(auth, email, password) //This one is from Firebase/app
+
 }
