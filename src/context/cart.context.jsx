@@ -40,19 +40,29 @@ const removeCartItem = (cartItems, cartItemToRemove) => {
   //if it isn't, return cartItems with matching cart item with reduced Q
 };
 
+const clearCartItem = (cartItems, cartItemToClear) => {
+
+
+  return cartItems.filter((cartItem) => cartItem.id !== cartItemToClear.id);
+};
+
 export const CartContext = createContext({
   isCartOpen: false,
   setisCartOpen: () => {},
   cartItems: [],
   addItemToCart: () => {},
   removeItemFromCart: () => {},
+  clearFromCart: () => {},
   cartCount: 0,
+  cartTotal: 0
 });
 
 export const CartProvider = ({ children }) => {
   const [isCartOpen, setisCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+
 
   useEffect(() => {
     const newCartCount = cartItems.reduce(
@@ -62,13 +72,21 @@ export const CartProvider = ({ children }) => {
     setCartCount(newCartCount);
   }, [cartItems]);
 
+  useEffect(()=>{
+    const newCartTotal = cartItems.reduce((total, cartItem) => total + cartItem.quantity * cartItem.price,0)
+    setCartTotal(newCartTotal)
+  },[cartItems])
+
   //function to add Items to cart. setCatrtItems calls the function (defined above) addCartItem, which checks if it should add the product (if it is not already there)
   const addItemToCart = (product) => {
     setCartItems(addCartItem(cartItems, product));
   };
 
   const removeItemFromCart = (carItemToRemove) => {
-    setCartItems(removeCartItem(cartItems, carItemToRemove))
+    setCartItems(removeCartItem(cartItems, carItemToRemove));
+  };
+  const clearFromCart = (cartItemToClear) => {
+    setCartItems(clearCartItem(cartItems, cartItemToClear));
   };
 
   const value = {
@@ -77,8 +95,9 @@ export const CartProvider = ({ children }) => {
     addItemToCart,
     cartItems,
     cartCount,
-    removeItemFromCart
+    removeItemFromCart,
+    clearFromCart,
+    cartTotal
   };
-
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
