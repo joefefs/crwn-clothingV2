@@ -1,5 +1,5 @@
 # Getting Started with Create React App
-
+THIS BRANCH IS FOR EDUCATIONAL PURPOSES. IT MANAGES STATE BY USING CONTEXT API. NO REDUCERS NO REDUX. THIS WILL BE KEPT ON A BRANCH FOR FUTURE REFERENCE!
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
