@@ -55,7 +55,8 @@ export const db = getFirestore();
 // New method to populate DB in firestore
 export const addCollectionAndDocuments = async (
   collectionKey,
-  objectsToAdd
+  objectsToAdd,
+  field
 ) => {
   const collectionRef = collection(db, collectionKey);
   const batch = writeBatch(db);
@@ -87,7 +88,7 @@ export const getCategoriesAndDocuments = async () => {
 //Here we will set a new User coming from the response after a succseful authentication. userAuth is the response from the Auth on the sign in component
 export const createUserDocumentFromAuth = async (
   userAuth,
-  additionalInformatio = {}
+  additionalInformation = {}
 ) => {
   //the second param is a methid for the SignUp with Email and password (because it might return a user without displayName for example)
 
@@ -114,7 +115,7 @@ export const createUserDocumentFromAuth = async (
         displayName,
         email,
         createdAt,
-        ...additionalInformatio,
+        ...additionalInformation,
       });
     } catch (error) {
       console.log("error creating the user", error.message);
