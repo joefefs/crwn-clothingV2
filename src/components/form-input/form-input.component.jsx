@@ -1,20 +1,16 @@
 import React from "react";
-import "./form-input.styles.scss";
+import {FormInputLabel, Input, Group} from "./form-input.styles.js";
 
 function FormInput({ label, ...otherProps }) {
   return (
-    <div className="group">
-      <input className="form-input" {...otherProps} />
+    <Group>
+      <Input {...otherProps} />
       {label && (
-        <label
-          className={`${
-            otherProps.value.length ? "shrink" : null
-          } form-input-label`}
-        >
+        <FormInputLabel shrink={otherProps.value.length}> {/* Instead of passinga className with a ternary, we just the length of the array... on the styled component definition, if the value is trudy (there's at least one character), it will apply shrink styles*/}
           {label}
-        </label>
+        </FormInputLabel>
       )}
-    </div>
+    </Group>
   );
 }
 
